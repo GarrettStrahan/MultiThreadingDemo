@@ -1,26 +1,19 @@
-import time
-import multiprocessing
+from threading import Thread
+import os
+import math
 
-def calc_square(numbers):
-	for n in numbers:
-		print("Process 1: Working")
-		print('Squared = ' + str(n*n) + "\n")
+def calc():
+    for i in range(0, 4000000):
+        math.sqrt(i)
 
+threads = []
 
-def calc_cube(numbers):
-	for n in numbers:
-		print("Process 2: Working")
-		print('Cubed = ' + str(n*n*n) + "\n")
+for i in range (os.cpu_count()):
+    print('registering thread %d' % i)
+    threads.append(Thread(target=calc))
 
-if __name__	 == "__main__":
-	arr = [2,3,8,9]
-	p1 = multiprocessing.Process(target=calc_square, args=(arr,)) #the reason that we are using (arr,)) is because the arguement is a tuple. The line of code is setting a process 1 to do calculating the square root.
-	p2 = multiprocessing.Process(target=calc_cube, args=(arr,)) #this line is doing process #2 to do calculating cubed
+for thread in threads:
+    thread.start()
 
-
-	p1.start()
-	p2.start()
-
-	p1.join()
-	p2.join()
-	print("Done!")
+for thread in threads:
+    thread.join()
